@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import cv2
 import shutil
 import os
 import zipfile
@@ -65,7 +64,8 @@ for i, file in enumerate(tqdm(Path("/kaggle/working/plates/test").glob('*.jpg'))
                 input = i.read()
                 output = remove(input, session=session)
                 o.write(output)
- 
+
+# keras 사용해 훈련용 이미지 전처리 실행
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
         rotation_range=10,
         width_shift_range=0.1,
@@ -83,6 +83,7 @@ train_ds = train_datagen.flow_from_directory(
         class_mode='binary',
         shuffle=True)
 
+# keras 사용해 검증용 이미지 전처리 실행
 val_datagen = tf.keras.preprocessing.image.ImageDataGenerator()
 
 val_ds = val_datagen.flow_from_directory(
@@ -116,21 +117,23 @@ x = keras.applications.resnet.preprocess_input(inputs)
 # 파인 튜닝 시 해당 레이어를 동결하여 영향을 받지 않게끔 한다
 x = base_model(x, training=False)
 
+# 모델에서 사용할 레이어의 패러미터를 설정
 x = keras.layers.GlobalAveragePooling2D()(x)
 x = keras.layers.Dense(400, activation='relu')(x)
 x = keras.layers.Dropout(0.25)(x)  # Regularize with dropout
 outputs = keras.layers.Dense(1, activation = 'sigmoid')(x)
- 
-model = keras.Model(inputs, outputs)
 
+# 딥 러닝 위해 사용할 모델 지정
+model = keras.Model(inputs, outputs)
 model.compile(loss ='binary_crossentropy', 
               optimizer = keras.optimizers.Adam(learning_rate = 0.0003, amsgrad = True), 
               metrics = ['binary_accuracy'])
 
+# 만들어진 모델의 개요 출력
 model.summary()
 
+# 학습 완료 시 일찍 종료할 수 있게끔 설정 
 cb_early_stopper = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 7)
-
 hist = model.fit(train_ds,
           validation_data = val_ds,
           epochs = 200,
@@ -142,6 +145,7 @@ history_frame.loc[:, ['binary_accuracy', 'val_binary_accuracy']].plot()
 
 shutil.copytree('plates/test', 'test/unknown', dirs_exist_ok=True)
 
+# keras 사용해 테스트용 이미지 전처리 실행
 test_datagen = tf.keras.preprocessing.image.ImageDataGenerator()
 test_ds = test_datagen.flow_from_directory(
         './test',
@@ -149,10 +153,21 @@ test_ds = test_datagen.flow_from_directory(
         keep_aspect_ratio = True,
         batch_size = 32,
         shuffle = False)
-
 test_ds.reset()
+
+# 만들어진 모델과 주어진 이미지 기반으로 예측 실행
 preds = model.predict(test_ds, verbose=True)
 preds[:10]
 
 test_ds.reset()
 get_image_and_label_batch(test_ds, 4, labels=preds)
+
+labels = ['dirty' if x > 0.5 else 'cleaned' for x in preds]
+labels[:8]
+
+# 샘플 출력 데이터를 기반으로 제출용 csv 파일을 출력
+submission_df = pd.read_csv('/kaggle/input/platesv2/sample_submission.csv')
+submission_df['label'] = labels
+submission_df
+
+submission_df.to_csv('submission.csv', index=False)
