@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Individual Folders
+data_augment
+data_test
+plates
+
 # C extensions
 *.so
 
@@ -77,6 +82,9 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Images
+*.jpg
 
 # IPython
 profile_default/
