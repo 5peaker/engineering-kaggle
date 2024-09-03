@@ -5,9 +5,6 @@ import os
 import zipfile
 import cv2
 import shutil 
-
-import time
-import copy
 import torch
 import torchvision
 
@@ -472,6 +469,7 @@ class ImageFolderWithPaths(torchvision.datasets.ImageFolder):
         return tuple_with_path
     
 df = pd.DataFrame
+
 for (i,tranforms) in dataset_transforms.items():
     test_dataset = ImageFolderWithPaths('/kaggle/working/test', tranforms) 
     test_dataloader = torch.utils.data.DataLoader(
