@@ -1,0 +1,22 @@
+type: object
+properties:
+  PassengerId:
+    type: number
+  Pclass:
+    type: number
+  Name:
+    type: number
+  Sex:
+    type: number
+  Age:
+    type: number
+  SibSp:
+    type: number
+  Parch:
+    type: number
+  Ticket:
+    type: number
+  Fare:
+    type: number
+  Embarked:
+    type: number

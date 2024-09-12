@@ -1,0 +1,31 @@
+title: TabularClassification
+description: 'Classification results.
+
+  '
+type: object
+properties:
+  classes:
+    type: array
+    items:
+      type: string
+      enum:
+      - '0'
+      - '1'
+    description: 'The name of the classes being classified, contains all possible
+      values of the target column.
+
+      '
+  scores:
+    type: array
+    items:
+      type: number
+      format: float
+      minimum: 0.0
+      maximum: 1.0
+    description: 'The model''s confidence in each class being correct, higher value
+      means higher confidence. The N-th score corresponds to the N-th class in classes.
+
+      '
+x-batchpredict-csv-classification-labels: classes
+x-batchpredict-csv-classification-scores: scores
+x-target-column-name: Survived

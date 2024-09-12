@@ -1,0 +1,55 @@
+type: object
+required:
+- PassengerId
+- Pclass
+- Name
+- Sex
+- Age
+- SibSp
+- Parch
+- Ticket
+- Fare
+- Embarked
+properties:
+  PassengerId:
+    type: string
+    nullable: true
+  Pclass:
+    type: string
+    nullable: true
+  Name:
+    type: string
+    nullable: true
+  Sex:
+    type: string
+    nullable: true
+  Age:
+    type: string
+    nullable: true
+  SibSp:
+    type: string
+    nullable: true
+  Parch:
+    type: string
+    nullable: true
+  Ticket:
+    type: string
+    nullable: true
+  Fare:
+    type: string
+    nullable: true
+  Embarked:
+    type: string
+    nullable: true
+nullable: true
+example:
+  PassengerId: '501.0'
+  Pclass: '3'
+  Name: Mr.
+  Sex: male
+  Age: '29.69911765'
+  SibSp: '0.0'
+  Parch: '0.0'
+  Ticket: '237216.0'
+  Fare: '14.4542'
+  Embarked: S
